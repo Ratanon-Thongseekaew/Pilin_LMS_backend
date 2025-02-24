@@ -284,12 +284,14 @@ CLOUDINARY_API_SECRET=
 ### Service
 | Path | Method | Authen | params | query | body |  
 |:--|:--|:--|:--|:--  |:--
-USER-Auth
+USER-Auth checked
 /home |-|-|-|-|-|
 |/auth/register |post|-|-|-| {email,firstname,lastname,password,confirmPassword}
 |/auth/login|post|-|-|-| {email,password}
 |/auth/current-user|get|y|-|-|-|
 USER-COURSE
+|/me|get|y|-|-|-|
+|/course|get|y|-|-|-|
 |/course|get|y|-|-|-|
 |/course/detail|get|y|:id|-|-|
 |/course/payment/order|post|y|:id|-|-|

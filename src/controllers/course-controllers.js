@@ -58,7 +58,7 @@ const courses = await prisma.course.findMany({
 
 }
 //done
-exports.adminGetCourse = async(req,res,next)=>{
+exports.adminGetCourse = async(req,res,next)=>{0
     const {courseId: id} = req.params
     //courseId : id เปลี่ยนชื่อใน destructuring
     try {
