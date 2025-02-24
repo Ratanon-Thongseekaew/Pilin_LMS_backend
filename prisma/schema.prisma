@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  firstname String
+  lastname  String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  cart      Cart[]
+  orders    Order[]
+  Course    Course[]
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id          Int         @id @default(autoincrement())
+  title       String      @db.VarChar(100)
+  description String      @db.Text
+  price       Int
+  instructor  String
+  videoURL    String
+  categoryId  Int
+  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  cart        Cart[]
+  orderItem   OrderItem[]
+  length      String
+  userId      Int
+  users       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime    @updatedAt
+}
+
+model Category {
+  id      Int      @id @default(autoincrement())
+  name    String   @db.VarChar(50)
+  Courses Course[]
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  users     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  Int
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt
+  // ป้องกันการเพิ่มสินค้าเดิมซ้ำ ๆ ลงในตะกร้า
+
+  @@unique([userId, courseId])
+}
+
+model Order {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  users       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItem   OrderItem[]
+  total       Int
+  status      PaymentStatus @default(PENDING)
+  paymentSlip String?
+  createdAt   DateTime      @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime      @updatedAt
+}
+
+model OrderItem {
+  id       Int    @id @default(autoincrement())
+  orderId  Int
+  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  courseId Int
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  price    Int
+}
