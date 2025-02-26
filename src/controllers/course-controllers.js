@@ -51,6 +51,8 @@ const courses = await prisma.course.findMany({
     skip:skip,
     take:Number(limit),
 });
+console.log("123456 hahaha")
+console.log(courses)
     res.status(200).json({courses})
 } catch (error) {
     next(error)
@@ -66,7 +68,7 @@ exports.adminGetCourse = async(req,res,next)=>{0
             return createError(400, "course ID Must be provided")
         }
         if(isNaN(Number(id))){
-            return createError(400, "Invalid ID")
+            return createError(400, "Invalid ID admingetCourse")
         }
         const getCourse = await prisma.course.findFirst({
                 where:{
@@ -177,6 +179,7 @@ exports.adminUpdateCourse = async(req,res,next)=>{
 exports.adminDeleteCourse = async(req,res,next)=>{
     try {
         const {courseId:id} = req.params
+        console.log("Request.Body check",req.params)
         console.log("This is ID:",id)
         if(!id){
             return createError(400, "course ID Must be provided")
@@ -194,6 +197,7 @@ exports.adminDeleteCourse = async(req,res,next)=>{
              id:course.id
             },
         });
+        console.log("This is ID:",id)
         res.json({
             message: "Delete Successfully",
             deleteCourse:course})
@@ -202,3 +206,44 @@ exports.adminDeleteCourse = async(req,res,next)=>{
         next(error)
     }
 }
+
+//done
+exports.adminGetEveryCourses = async (req, res, next) => {
+    try {
+        const { page = "1", limit = "25" } = req.query;
+
+        if (isNaN(Number(page)) || isNaN(Number(limit))) {
+            return next(createError(400, "Invalid type for page or limit"));
+        }
+
+        const skip = (Number(page) - 1) * Number(limit);
+
+        const courses = await prisma.course.findMany({
+            select: {
+                id: true,
+                title: true,
+                instructor: true,
+                price: true,
+                createdAt: true,
+                updatedAt: true,
+                category: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            skip: skip,
+            take: Number(limit),
+        });
+
+        console.log("✅ Fetching all courses...");
+        console.log(courses);
+
+        res.status(200).json({ courses });
+    } catch (error) {
+        next(error);
+    }
+};

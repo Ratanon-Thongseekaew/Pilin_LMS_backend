@@ -15,8 +15,6 @@ exports.loginUser = z.object({
         password: z.string().min(6, "Invalid email or password"),
     })
 
-
-
 exports.validateWithZod = (schema)=> (req,res,next)=>{
     try {
         console.log("hello, middlewares");

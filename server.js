@@ -18,6 +18,7 @@ app.use(express.json()); //for reading JSON
 app.use(authRouters)
 app.use(courseRouter)
 app.use("/user",userRouters)
+
 // app.use("/payment")(order)
 // app.use("/cart",)
 //2.course-route

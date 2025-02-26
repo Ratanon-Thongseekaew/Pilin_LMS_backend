@@ -4,7 +4,9 @@ const courseController = require("../controllers/course-controllers")
 const { authCheck } = require("../middlewares/auth-middlewares")
 //create a new course
 courseRouter.post("/admin/courses",authCheck,courseController.adminCreateCourse)
-//get all course pagination
+//get every courses
+courseRouter.get("/admin/courses/course/allcourses",authCheck,courseController.adminGetEveryCourses)
+//get all course pagination with category
 courseRouter.get("/admin/courses/:category",authCheck,courseController.adminGetAllCourses)
 // get a course
 courseRouter.get("/admin/courses/course/:courseId",authCheck,courseController.adminGetCourse)
