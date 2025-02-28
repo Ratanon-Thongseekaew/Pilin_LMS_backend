@@ -3,6 +3,8 @@ const prisma = require("../configs/prisma")
 const { connect } = require("../routes/auth-routes")
 const { number } = require("zod")
 const courseService = require("../services/course-service")
+const cloudinary = require("../configs/cloudinary")
+
 exports.adminHome = async(req,res,next)=>{
     try {
     res.send("Hello Admin")
@@ -105,24 +107,31 @@ exports.adminCreateCourse = async (req,res,next)=>{
     if(!req.user || req.user.role !== "ADMIN"){
         return createError(403,"Unauthorized")
     }
-    // const categories = await prisma.category.findMany();
-    // console.log("hi categoryABC",categories)
+    //handle file upload
+    let imageUrl = "";
+    if(req.file){
+        const uploadResponse = await cloudinary.uploader.upload(req.file.path,{
+            folder: "pilin_course_thumbnails",
+        });
+        imageUrl = uploadResponse.secure_url;
+    }
 const newCourse = await prisma.course.create({
     data: {
         title:title,
         description:description,
-        price:price,
+        price: +price,
         instructor:instructor,
         length:length,
         videoURL:videoURL,
+        thumbnails: imageUrl,
         users:{
             connect:{
-                id: req.user.id
+                id: +req.user.id
             },
         },
         category:{
             connect:{
-                id: categoryId,
+                id: +categoryId,
             }
         }
     },

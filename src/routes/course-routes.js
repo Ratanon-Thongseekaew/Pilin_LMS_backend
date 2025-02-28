@@ -2,8 +2,9 @@ const express = require("express")
 const courseRouter = express.Router()
 const courseController = require("../controllers/course-controllers")
 const { authCheck } = require("../middlewares/auth-middlewares")
+const upload = require("../middlewares/upload")
 //create a new course
-courseRouter.post("/admin/courses/newcourse",authCheck,courseController.adminCreateCourse)
+courseRouter.post("/admin/courses/newcourse",authCheck,upload.single("thumbnails"),courseController.adminCreateCourse)
 //get every courses
 courseRouter.get("/admin/courses/course/allcourses",authCheck,courseController.adminGetEveryCourses)
 //get all course pagination with category

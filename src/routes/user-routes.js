@@ -9,6 +9,8 @@ userRouters.get("/me",authCheck,userControllers.userGetme)
 userRouters.put("/me/update",authCheck,userControllers.userUpdate)
 // deleteUser
 userRouters.delete("/me/delete",authCheck,userControllers.userDelete)
+//user Get EveryCourse
+userRouters.get("/course/allcourses",authCheck,userControllers.userGetEveryCourses)
 //getcourseList using category
 userRouters.get("/courses/:category",authCheck,userControllers.userGetCourseLists)
 //get A Course

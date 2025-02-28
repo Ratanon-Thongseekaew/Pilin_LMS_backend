@@ -50,6 +50,7 @@ model Course {
   cart        Cart[]
   orderItem   OrderItem[]
   length      String
+  thumbnails String? @db.LongText
   userId      Int
   users       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime    @default(now()) @db.Timestamp(0)

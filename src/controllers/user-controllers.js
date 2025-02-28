@@ -149,3 +149,42 @@ exports.userGetCourse = async (req, res, next) => {
     }
 };
 
+exports.userGetEveryCourses = async(req, res, next) =>{
+  try {
+    const { page = "1", limit = "25" } = req.query;
+
+    if (isNaN(Number(page)) || isNaN(Number(limit))) {
+        return next(createError(400, "Invalid type for page or limit"));
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const courses = await prisma.course.findMany({
+        select: {
+            id: true,
+            title: true,
+            instructor: true,
+            price: true,
+            createdAt: true,
+            updatedAt: true,
+            category: {
+                select: {
+                    name: true,
+                },
+            },
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+        skip: skip,
+        take: Number(limit),
+    });
+
+    console.log("✅ Fetching all courses...");
+    console.log(courses);
+
+    res.status(200).json({ courses });
+} catch (error) {
+    next(error);
+}
+}
