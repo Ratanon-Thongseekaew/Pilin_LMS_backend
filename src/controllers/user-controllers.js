@@ -164,6 +164,7 @@ exports.userGetEveryCourses = async(req, res, next) =>{
             id: true,
             title: true,
             instructor: true,
+            thumbnails:true,
             price: true,
             createdAt: true,
             updatedAt: true,
