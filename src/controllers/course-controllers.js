@@ -82,6 +82,7 @@ exports.adminGetCourse = async(req,res,next)=>{0
                     instructor: true,
                     length: true,
                     price: true,
+                    thumbnails:true,
                     description: true,
                     videoURL:true,
                     category:{

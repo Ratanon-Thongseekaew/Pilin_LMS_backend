@@ -1,34 +1,72 @@
-const createError = require("../utils/create-errors")
-const prisma = require("../configs/prisma")
+const createError = require("../middlewares/errorHandler");
+const prisma = require("../configs/prisma");
 
-exports.addtoCart =async(req,res,next)=>{
-try {
-    res.send({message: "Hello Add to Cart"})
-} catch (error) {
-    next(error)
-}
-}
-
-exports.getCartItems = async(res,res,next)=>{
-    try {
-        res.send({message: "Hello Get Cart Items"})
-    } catch (error) {
-        next(error)
+//done
+exports.addtoCart = async (req, res, next) => {
+  const { userId, courseId } = req.body;
+  try {
+    const existingCartItem = await prisma.cart.findUnique({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId,
+        },
+      },
+    });
+    if (existingCartItem) {
+      createError(409, "Course is already in cart");
     }
-}
+    const cartItem = await prisma.cart.create({
+      data: {
+        userId,
+        courseId,
+      },
+    });
+    res.json({ message: "Add to cart Successfully", cartItem: cartItem });
+  } catch (error) {
+    next(error);
+  }
+};
 
-exports.removefromCart =async(res,res,next)=>{
-    try {
-        res.send({message: "Remove from Cart"})
-    } catch (error) {
-        next(error)
-    }
-}
-exports.clearCart = async(res,res,next)=>{
-    try {
-        res.send({message:"Clear Cart"})
-    } catch (error) {
-        next(error)
+//doing
+exports.getAllCartItems = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const cartItem = await prisma.cart.findMany({
+      where: { userId },
+      include: { course: true },
+    });
+    res.json({ message: "Hello, get cart item", cartItem: cartItem });
+  } catch (error) {
+    next(error);
+  }
+};
 
+exports.removefromCart = async (req, res, next) => {
+  try {
+    const userId =req.user.id;
+    const {courseId} = req.params;
+
+    const cartItem = await prisma.cart.findFirst({
+        where: {userId,courseId:courseId},
+    });
+    if(!cartItem){
+        return createError(404,"Course is not found")
     }
-}
+    await prisma.cart.delete({
+        where:{
+            id:cartItem.id
+        }
+    })
+    res.json({ message: "Course was remove from Cart" });
+  } catch (error) {
+    next(error);
+  }
+};
+exports.clearCart = async (req, res, next) => {
+  try {
+    res.send({ message: "Clear Cart" });
+  } catch (error) {
+    next(error);
+  }
+};

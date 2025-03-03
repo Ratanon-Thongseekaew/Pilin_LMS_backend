@@ -135,6 +135,7 @@ exports.userGetCourse = async (req, res, next) => {
                     instructor: true,
                     length: true,
                     price: true,
+                    thumbnails:true,
                     category:{
                         select:{
                             id:true,

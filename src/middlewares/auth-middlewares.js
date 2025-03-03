@@ -8,7 +8,7 @@ try {
     console.log(authorization)
     //CHECK ถ้าไม่มี token (missing token)
     if(!authorization){
-        return createError(400, "something went wrong")
+        return next(createError(400, "something went wrong"))
     }
     const token = authorization.split(" ")[1]
     //verify token
@@ -16,7 +16,7 @@ try {
     console.log(err)
     console.log(decode)
     if(err){
-        return createError(401, "Unauthorized")
+        return next(createError(401, "Unauthorized"))
     }
     req.user = decode
     next()
