@@ -1,4 +1,4 @@
-const createError =require("../middlewares/errorHandler");
+const createError =require("../utils/create-errors");
 const prisma = require("../configs/prisma");
 
 //done

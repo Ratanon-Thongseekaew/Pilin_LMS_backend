@@ -2,7 +2,7 @@ const path = require("path")
 const multer = require("multer")
 
 
-console.log(__dirname)
+// console.log(__dirname)
 
 const storage = multer.diskStorage({
     destination:(req,file,callback) =>callback(null,path.join(__dirname, "../../upload-pic")),

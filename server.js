@@ -9,6 +9,7 @@ const notFound = require("./src/middlewares/notFound");
 const courseRouter = require("./src/routes/course-routes");
 const userRouters = require("./src/routes/user-routes");
 const cartRouters = require("./src/routes/cart-routes");
+const orderRouters =require("./src/routes/order-routes")
 //middlewares
 app.use(cors()); // allow cross domain connection
 app.use(morgan("dev")); // show log on terminal
@@ -20,6 +21,7 @@ app.use(authRouters)
 app.use(courseRouter)
 app.use("/user",userRouters)
 app.use("/cart",cartRouters)
+app.use("/order",orderRouters)
 // app.use("/payment")(order)
 // app.use("/cart",)
 //2.course-route
