@@ -259,3 +259,35 @@ exports.adminGetEveryCourses = async (req, res, next) => {
         next(error);
     }
 };
+
+
+exports.admingetAllUsers = async (req, res, next) => {
+    //code
+    try {
+      // console.log(req.user);
+      const users = await prisma.user.findMany({
+        select: {
+          id:true,
+          email: true,
+          firstname: true,
+          lastname:true,
+          role: true,
+          orders:{
+            select:{
+                id:true,
+                total:true,
+                status:true,
+                paymentSlip:true
+            }
+          }
+
+        },
+        
+      });
+      console.log(users)
+      res.status(200).json({ message: "hello, List Users",result:users });
+    } catch (err) {
+      next(err);
+      console.log("Get all Users Check:",err)
+    }
+  };
