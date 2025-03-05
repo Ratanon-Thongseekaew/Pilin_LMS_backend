@@ -17,7 +17,7 @@ exports.userGetme = async (req, res, next) => {
       },
     });
     console.log(profile);
-    res.json({
+    res.status(200).json({
       message: `Hello ${profile.firstname}`,
       result: profile,
     });
