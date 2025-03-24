@@ -5,9 +5,11 @@ const { authCheck} = require("../middlewares/auth-middlewares")
 const upload = require("../middlewares/upload")
 
 //create order 
+orderRouters.get("/user/allorder",authCheck,orderControllers.getAllOrders)
 orderRouters.post("/",authCheck,orderControllers.createOrder)
 orderRouters.post("/:orderId/payment",authCheck,upload.single("paymentSlip"),orderControllers.uploadPaymentSlip)
 orderRouters.get("/user/:userId",authCheck,orderControllers.getUserOrders)
+orderRouters.put("/:orderId/status",authCheck,orderControllers.updateOrderStatus)
 
 
 module.exports = orderRouters

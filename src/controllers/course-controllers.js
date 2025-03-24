@@ -159,7 +159,7 @@ exports.adminUpdateCourse = async(req,res,next)=>{
         }
         const course = await courseService.getCoursebyId(id)
         if(!course){
-            return createError(400, "course is not found");
+             return createError(400, "course is not found");
         }
         await prisma.course.update({
             where: {

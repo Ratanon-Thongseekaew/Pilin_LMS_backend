@@ -8,6 +8,7 @@ exports.addtoCart = async (req, res, next) => {
   try {
     const existingCartItem = await prisma.cart.findUnique({
       where: {
+          // ป้องกันการเพิ่มสินค้าเดิมซ้ำ ๆ ลงในตะกร้า
         userId_courseId: {
           userId,
           courseId,

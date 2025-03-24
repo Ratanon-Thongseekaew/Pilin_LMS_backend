@@ -112,3 +112,96 @@ try {
   next(error)
 }
 }
+
+exports.getAllOrders = async (req, res, next) => {
+  try {
+    // Optional: Get status filter from query params
+    const { status } = req.query;
+    
+    // Build filter conditions
+    const where = {};
+    if (status && ['PENDING', 'SUCCESS', 'FAILED'].includes(status)) {
+      where.status = status;
+    }
+    
+    // Get all orders with user and order item information
+    const orders = await prisma.order.findMany({
+      where,
+      include: {
+        users: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            email: true
+          }
+        },
+        orderItem: {
+          include: {
+            course: {
+              select: {
+                id: true,
+                title: true,
+                price: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    
+    res.json({ message: "Get All Orders Successfully", orders: orders });
+  } catch (error) {
+    console.error('Error getting all orders:', error);
+    next(error);
+  }
+};
+
+
+exports.updateOrderStatus = async (req, res, next) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+  
+  try {
+    // Validate status
+    if (!['PENDING', 'SUCCESS', 'FAILED'].includes(status)) {
+      return createError(400, "Invalid status value");
+    }
+    
+    // Find the order first to check if it exists
+    const order = await prisma.order.findUnique({
+      where: { id: Number(orderId) }
+    });
+    
+    if (!order) {
+      return createError(404, "Order not found");
+    }
+    
+    // Update the order status
+    const updatedOrder = await prisma.order.update({
+      where: { id: Number(orderId) },
+      data: { status },
+      include: {
+        users: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            email: true
+          }
+        }
+      }
+    });
+    
+    res.json({ 
+      message: `Order status updated to ${status} successfully`, 
+      order: updatedOrder 
+    });
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    next(error);
+  }
+};
