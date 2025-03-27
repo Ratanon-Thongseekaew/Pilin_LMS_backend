@@ -7,6 +7,9 @@
     "start": "nodemon server.js",
     "resetDB": "node prisma/resetDB.js"
   },
+  "prisma":{
+    "seed":"node prisma/seed.js" 
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

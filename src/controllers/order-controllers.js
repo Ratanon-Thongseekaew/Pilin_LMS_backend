@@ -190,7 +190,7 @@ exports.updateOrderStatus = async (req, res, next) => {
             id: true,
             firstname: true,
             lastname: true,
-            email: true
+            email: true,
           }
         }
       }

@@ -150,7 +150,7 @@ exports.adminUpdateCourse = async(req,res,next)=>{
     try {
         const {courseId:id} = req.params;
         console.log("This is ID",id)
-        const {title,categoryId,description,price,instructor,videoURL,length}=req.body;
+        const {title,categoryId,description,price,instructor,videoURL,length,thumbnails}=req.body;
         if(!id){
             return createError(400, "course ID Must be provided")
         }
@@ -172,6 +172,7 @@ exports.adminUpdateCourse = async(req,res,next)=>{
                 length:length,
                 price:price,
                 videoURL:videoURL,
+                thumbnails:thumbnails,
                 category:{
                     connect:{
                         id: categoryId,
