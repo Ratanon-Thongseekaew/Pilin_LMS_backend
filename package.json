@@ -7,8 +7,8 @@
     "start": "nodemon server.js",
     "resetDB": "node prisma/resetDB.js"
   },
-  "prisma":{
-    "seed":"node prisma/seed.js" 
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +26,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.9",
     "prisma": "^6.4.1",
+    "stripe": "^17.7.0",
     "zod": "^3.24.2"
   }
 }

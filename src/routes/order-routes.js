@@ -11,5 +11,7 @@ orderRouters.post("/:orderId/payment",authCheck,upload.single("paymentSlip"),ord
 orderRouters.get("/user/:userId",authCheck,orderControllers.getUserOrders)
 orderRouters.put("/:orderId/status",authCheck,orderControllers.updateOrderStatus)
 
+//payment stripe
+orderRouters.post("/checkout/:id",authCheck,orderControllers.checkOut)
 
 module.exports = orderRouters
