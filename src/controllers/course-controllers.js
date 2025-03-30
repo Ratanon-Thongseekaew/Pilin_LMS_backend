@@ -292,3 +292,31 @@ exports.admingetAllUsers = async (req, res, next) => {
       console.log("Get all Users Check:",err)
     }
   };
+
+  //some***
+  //"Find me courses where at least one of their order items belongs to an order that has the specified userId and a SUCCESS status."
+exports.userGetPurchasedCourses = async(req, res, next)=>{
+   try {
+    const userId = req.user.id;
+    const purchasedCourses = await prisma.course.findMany({
+        where:{
+            orderItem:{
+                some:{
+                    order:{
+                        userId:userId,
+                        status:"SUCCESS"
+                    }
+                }
+            }
+        },
+        include: {
+            category: true
+          }
+    })
+    res.json(purchasedCourses);
+   } catch (error) {
+       console.error('Error fetching purchased courses:', error);
+    next(error)
+   }
+
+}

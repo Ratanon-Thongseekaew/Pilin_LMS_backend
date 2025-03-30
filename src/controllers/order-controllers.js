@@ -210,16 +210,18 @@ exports.updateOrderStatus = async (req, res, next) => {
 
 exports.checkOut = async (req, res, next) => {
   try {
-    console.log("Request body:", JSON.stringify(req.body));
     const id = req.params.id;
-    console.log("Order ID:", id, "Type:", typeof id);
     //find order
     if (!id) {
       return res.status(400).json({ error: "Missing order ID" });
     }
-    const orderId = parseInt(id, 10); // 10 ==> redis to interpret the string id as a decimal (base 10) number.
-    if (isNaN(orderId)) {
-      return res.status(400).json({ error: "Invalid order ID format" });
+    const numericId = id.toString().replace(/[^0-9]/g, '');
+    if (!numericId) {
+      return res.status(400).json({ error: "No valid digits found in order ID" });
+    }
+    const orderId = parseInt(numericId, 10); // 10 ==> redis to interpret the string id as a decimal (base 10) number.
+    if (!/^\d+$/.test(id.trim())) {
+      return res.status(400).json({ error: "Order ID must contain only digits" });
     }
     console.log("Looking for order with ID:", orderId);
 
@@ -263,13 +265,72 @@ exports.checkOut = async (req, res, next) => {
 
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
+      metadata: {orderId:order.id},
       line_items: line_items,
       mode: "payment",
-      return_url: `http://localhost:5173/user/checkout/complete/{CHECKOUT_SESSION_ID}`,
+      return_url: `http://localhost:5173/user/checkout/complete?session_id={CHECKOUT_SESSION_ID}`,
     });
     res.send({ clientSecret: session.client_secret });
   } catch (error) {
     console.error("Checkout error:", error);
+    next(error);
+  }
+};
+
+exports.checkOutStatus = async (req, res, next) => {
+  try {
+    // Get from path parameter, not query parameter
+    const session_id = req.params.session_id;
+    
+    console.log("Request params:", req.params);
+    console.log("Session ID from path:", session_id);
+    
+    if (!session_id) {
+      return res.status(400).json({ error: "Missing session ID" });
+    }
+    
+    try {
+      console.log("Retrieving Stripe session:", session_id);
+      const session = await stripe.checkout.sessions.retrieve(session_id);
+      console.log("Stripe session retrieved successfully:", session.id);
+      
+      const orderId = session.metadata?.orderId;
+      console.log("Order ID from session metadata:", orderId);
+      
+      if (!orderId) {
+        return res.status(400).json({ error: "No order ID found in session metadata" });
+      }
+      
+      if (session.status !== "complete") {
+        return res.status(400).json({ error: "Payment not complete", status: session.status });
+      }
+      
+      console.log("Updating order status for order ID:", orderId);
+      const result = await prisma.order.update({
+        where: {
+          id: Number(orderId)
+        },
+        data: {
+          status: "SUCCESS"
+        }
+      });
+      
+      console.log("Order status updated successfully");
+      
+      res.json({ 
+        message: "Payment Complete", 
+        status: session.status,
+        order: {
+          id: result.id,
+          status: result.status
+        }
+      });
+    } catch (stripeError) {
+      console.error("Stripe API error:", stripeError.message);
+      return res.status(400).json({ error: `Stripe error: ${stripeError.message}` });
+    }
+  } catch (error) {
+    console.error("Session retrieval error:", error);
     next(error);
   }
 };

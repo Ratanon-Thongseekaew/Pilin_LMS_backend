@@ -13,5 +13,5 @@ orderRouters.put("/:orderId/status",authCheck,orderControllers.updateOrderStatus
 
 //payment stripe
 orderRouters.post("/checkout/:id",authCheck,orderControllers.checkOut)
-
+orderRouters.get("/checkout-status/:session_id",authCheck,orderControllers.checkOutStatus)
 module.exports = orderRouters
