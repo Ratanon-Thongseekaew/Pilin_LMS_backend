@@ -17,7 +17,9 @@ courseRouter.get("/admin/courses/course/:courseId",authCheck,courseController.ad
 courseRouter.put("/admin/courses/course/:courseId",authCheck,courseController.adminUpdateCourse)
 //delete a course
 courseRouter.delete("/admin/courses/course/:courseId",authCheck,courseController.adminDeleteCourse)
+//get purchase courses
 courseRouter.get("/user/purchasedCourses",authCheck,courseController.userGetPurchasedCourses)
-
+//get purchased course by ID 
+courseRouter.get("/user/purchasedCourses/:courseId",authCheck,courseController.userGetpurchasedCourseById)
 
 module.exports = courseRouter;
